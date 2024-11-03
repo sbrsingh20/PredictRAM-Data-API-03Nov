@@ -4,8 +4,8 @@ import json
 import os
 
 # Define paths to the folders
-income_statement_folder = 'IncomeStatementStockData'  # Update this path
-stock_data_folder = 'StockData'                       # Update this path
+income_statement_folders = ['IncomeStatementStockData', 'IncomeStatementStockData2']  # List of paths
+stock_data_folder = 'StockData'  # Update this path
 
 # Helper function to find a matching file name in a folder based on a prefix match
 def find_file_by_prefix(folder_path, stock_name, extension=None):
@@ -17,15 +17,15 @@ def find_file_by_prefix(folder_path, stock_name, extension=None):
 
 # Function to load JSON income statement file
 def load_income_statement(stock_name):
-    json_path = find_file_by_prefix(income_statement_folder, stock_name, "json")
-    if json_path:
-        with open(json_path) as f:
-            data = json.load(f)
-        income_df = pd.DataFrame(data["IncomeStatement"])
-        return income_df
-    else:
-        st.error(f"Income statement for '{stock_name}' not found. Available income statements: {', '.join(list_available_files(income_statement_folder, 'json'))}")
-        return None
+    for folder in income_statement_folders:
+        json_path = find_file_by_prefix(folder, stock_name, "json")
+        if json_path:
+            with open(json_path) as f:
+                data = json.load(f)
+            income_df = pd.DataFrame(data["IncomeStatement"])
+            return income_df
+    st.error(f"Income statement for '{stock_name}' not found. Available income statements: {', '.join(list_available_files(income_statement_folders[0], 'json'))}, {', '.join(list_available_files(income_statement_folders[1], 'json'))}")
+    return None
 
 # Function to load Excel stock data file
 def load_stock_data(stock_name):
