@@ -4,8 +4,8 @@ import json
 import os
 
 # Define paths to the folders
-income_statement_folders = ['IncomeStatementStockData', 'IncomeStatementStockData2']  # List of paths
-stock_data_folder = 'StockData'  # Update this path
+income_statement_folders = ['IncomeStatementStockData', 'IncomeStatementStockData2']  # List of income statement paths
+stock_data_folders = ['StockData', 'StockData2']  # List of stock data paths
 
 # Helper function to find a matching file name in a folder based on a prefix match
 def find_file_by_prefix(folder_path, stock_name, extension=None):
@@ -29,13 +29,13 @@ def load_income_statement(stock_name):
 
 # Function to load Excel stock data file
 def load_stock_data(stock_name):
-    excel_path = find_file_by_prefix(stock_data_folder, stock_name, "xlsx")
-    if excel_path:
-        stock_df = pd.read_excel(excel_path)
-        return stock_df
-    else:
-        st.error(f"Stock data for '{stock_name}' not found. Available stock data: {', '.join(list_available_files(stock_data_folder, 'xlsx'))}")
-        return None
+    for folder in stock_data_folders:
+        excel_path = find_file_by_prefix(folder, stock_name, "xlsx")
+        if excel_path:
+            stock_df = pd.read_excel(excel_path)
+            return stock_df
+    st.error(f"Stock data for '{stock_name}' not found. Available stock data: {', '.join(list_available_files(stock_data_folders[0], 'xlsx'))}, {', '.join(list_available_files(stock_data_folders[1], 'xlsx'))}")
+    return None
 
 # Function to list available files in a folder with a specific extension
 def list_available_files(folder_path, extension):
